@@ -1,17 +1,20 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import re
+from tkcalendar import DateEntry
+from datetime import datetime
 
 def show_transactions(app):
     app.clear_main_content()
 
-    tk.Label(app.main_content_frame, text="Manage Transactions", font=("Poppins", 24, "bold"), fg="black", bg="#939393").pack(pady=20, anchor=tk.W, padx=20)
+    tk.Label(app.main_content_frame, text="Manage Transactions", font=("Helvetica", 24, "bold"), fg="black", bg="#939393").pack(pady=20, anchor=tk.W, padx=20)
 
     input_frame = tk.Frame(app.main_content_frame, bg="#939393")
     input_frame.pack(pady=10)
 
-    tk.Label(input_frame, text="Date (DD/MM/YYYY):", fg="black", bg="#939393").grid(row=0, column=0, padx=5)
-    app.date_entry = tk.Entry(input_frame)
+    tk.Label(input_frame, text="Date:", fg="black", bg="#939393").grid(row=0, column=0, padx=5)
+    app.date_entry = DateEntry(input_frame, width=12, background='darkblue',
+                                foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
     app.date_entry.grid(row=0, column=1, padx=5)
 
     tk.Label(input_frame, text="Amount:", fg="black", bg="#939393").grid(row=0, column=2, padx=5)
@@ -46,11 +49,21 @@ def show_transactions(app):
     tk.Button(table_frame, text="Edit Selected Transaction",   fg="black", bg="#939393", command=lambda: _edit_transaction(app)).pack(pady=5)
     tk.Button(table_frame, text="Delete Selected Transaction", fg="black", bg="#939393", command=lambda: _delete_transaction(app)).pack(pady=5)
 
+    app.date_entry = DateEntry(input_frame, 
+                               width=12, 
+                               background='darkblue', 
+                               foreground='white', 
+                               borderwidth=2, 
+                               date_pattern='dd/mm/yyyy')
+    app.date_entry.grid(row=0, column=1, padx=5)
+
+
+    app.date_entry.bind("<Key>", lambda e: "break")
     _load_transactions(app)
 
 
 def _add_transaction(app):
-    date_val = app.date_entry.get()
+    date_val = app.date_entry.get_date().strftime('%d/%m/%Y')
     amount_val = app.amount_entry.get()
     category_name = app.category_var.get()
     category_id = app.category_map.get(category_name)
@@ -70,7 +83,6 @@ def _add_transaction(app):
         return
 
     app.db.add_transaction(date_val, amount_val, category_id)
-    app.date_entry.delete(0, tk.END)
     app.amount_entry.delete(0, tk.END)
     _load_transactions(app)
 
@@ -115,11 +127,15 @@ def _edit_transaction(app):
     edit_window.grab_set()
     edit_window.focus_force()
 
-    tk.Label(edit_window, text="Edit Transaction", font=("Poppins", 16, "bold"), bg="#939393", fg="black").pack(pady=15)
+    tk.Label(edit_window, text="Edit Transaction", font=("Helvetica", 16, "bold"), bg="#939393", fg="black").pack(pady=15)
 
-    tk.Label(edit_window, text="Date (DD/MM/YYYY):", bg="#939393", fg="black").pack()
-    date_edit = tk.Entry(edit_window)
-    date_edit.insert(0, current_date)
+    tk.Label(edit_window, text="Date:", bg="#939393").pack()
+    date_edit = DateEntry(edit_window, width=12, date_pattern='dd/mm/yyyy')
+
+    date_edit.bind("<Key>", lambda e: "break")
+    
+    date_obj = datetime.strptime(current_date, '%d/%m/%Y')
+    date_edit.set_date(date_obj)
     date_edit.pack(pady=5)
 
     tk.Label(edit_window, text="Amount:", bg="#939393", fg="black").pack()
