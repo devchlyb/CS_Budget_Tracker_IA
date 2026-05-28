@@ -35,7 +35,8 @@ class DatabaseManager:
         ''')
         self.conn.commit()
 
-        self.cursor.execute("SELECT COUNT(*) FROM Categories")
+
+        self.cursor.execute("SELECT COUNT(*) FROM Categories") # to add more categories
         if self.cursor.fetchone()[0] == 0:
             defaults = [("Food", "Expense"), ("Transport", "Expense"), ("Salary", "Income")]
             self.cursor.executemany("INSERT INTO Categories (CategoryName, Type) VALUES (?, ?)", defaults)
@@ -75,3 +76,17 @@ class DatabaseManager:
     def delete_transaction(self, transaction_id):
         self.cursor.execute("DELETE FROM Transactions WHERE TransactionID = ?", (transaction_id,))
         self.conn.commit()
+
+    def get_balance(self):
+         self.cursor.execute("""
+            SELECT COALESCE(SUM(
+                CASE
+                    WHEN Categories.Type = 'Income'  THEN Transactions.Amount
+                    WHEN Categories.Type = 'Expense' THEN -Transactions.Amount
+                    ELSE 0
+                END
+            ), 0)
+            FROM Transactions
+            LEFT JOIN Categories ON Transactions.CategoryID = Categories.CategoryID
+        """)
+         return self.cursor.fetchone()[0]

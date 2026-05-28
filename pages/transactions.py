@@ -17,6 +17,7 @@ def show_transactions(app):
                                 foreground='white', borderwidth=2, date_pattern='dd/mm/yyyy')
     app.date_entry.grid(row=0, column=1, padx=5)
 
+
     tk.Label(input_frame, text="Amount:", fg="black", bg="#939393").grid(row=0, column=2, padx=5)
     app.amount_entry = tk.Entry(input_frame)
     app.amount_entry.grid(row=0, column=3, padx=5)

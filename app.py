@@ -10,7 +10,7 @@ class BudgetTrackerApp:
         self.root.title("Desktop Budget Tracker")
         self.root.geometry("1280x720")
 
-        self.db = DatabaseManager()
+        self.db = DatabaseManager() 
 
         self._build_layout()
         show_dashboard(self)
@@ -20,9 +20,9 @@ class BudgetTrackerApp:
         self.sidebar_frame.pack(side=tk.LEFT, fill=tk.Y)
         self.sidebar_frame.pack_propagate(False)
 
-        tk.Label(self.sidebar_frame, text="Desktop Budget Tracker", bg="#B0B0B0", fg="black", font=("Poppins", 16, "bold")).pack(pady=30)
+        tk.Label(self.sidebar_frame, text="Desktop Budget Tracker", bg="#B0B0B0", fg="black", font=("Helvetica", 16, "bold")).pack(pady=30)
 
-        btn_style = {"bg": "#34495E", "fg": "black", "font": ("Poppins", 12), "borderwidth": 0, "pady": 10}
+        btn_style = {"bg": "#34495E", "fg": "black", "font": ("Helvetica", 12), "borderwidth": 0, "pady": 10}
 
         tk.Button(self.sidebar_frame, text="Dashboard",     command=lambda: show_dashboard(self),     **btn_style).pack(fill=tk.X, padx=10, pady=5)
         tk.Button(self.sidebar_frame, text="Transactions",  command=lambda: show_transactions(self),  **btn_style).pack(fill=tk.X, padx=10, pady=5)
